@@ -14,7 +14,7 @@ import org.hibernate.annotations.NaturalId;
 import lombok.Data;
 
 @Entity
-@Table(name="ROLE")
+@Table(name="ROLES")
 @Data
 public class Role {
 	
@@ -27,7 +27,8 @@ public class Role {
 	@Column(name = "ROLE_NAME", length=60)
 	private RoleName roleName;
 
-	public Role() {
+	public Role(RoleName roleName) {
 		super();
+		this.roleName = roleName;
 	}
 }
