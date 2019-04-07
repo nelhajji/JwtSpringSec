@@ -51,10 +51,4 @@ public class AuthenticationRessource {
 		return ResponseEntity.ok(new JwtDTO(token, userDetails.getUsername(), userDetails.getAuthorities()));
 		
 	}
-	
-	@GetMapping("/getPro")
-	public ResponseEntity<String> getProperties() {
-		return ResponseEntity.ok(jWTProperties.getJwtExpiration() +  " ***** " + jWTProperties.getJwtSecret());
-	}
-
 }

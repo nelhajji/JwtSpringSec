@@ -25,10 +25,15 @@ public class Role {
 	@Enumerated(EnumType.STRING)
 	@NaturalId
 	@Column(name = "ROLE_NAME", length=60)
-	private RoleName roleName;
+	private RoleName roleName;	
 
 	public Role(RoleName roleName) {
 		super();
 		this.roleName = roleName;
+	}
+
+
+	public Role() {
+		super();
 	}
 }
