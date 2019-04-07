@@ -22,9 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -61,10 +63,21 @@ public class UserRessource {
 		
 	}
 	
-	@GetMapping("/user/{userId}")
-	public ResponseEntity<User> findUserById(@PathVariable Long userId){
-		Optional<User> user = userService.getUserById(userId);
-		return new ResponseEntity<User>(user.get(), HttpStatus.FOUND);
+	@PutMapping("/users")
+	@Transactional
+	public ResponseEntity<User> updateUser(@RequestBody User user){
+		
+		Optional<User> userDB = userService.getUserById(user.getId());
+ 		
+		if(!userDB.isPresent()) {
+			return new ResponseEntity<User>(user, HttpStatus.NOT_FOUND);
+		}
+		
+		logger.debug("update user");
+		User userUpdated = userService.saveOrUpdateUser(user);
+		
+		return new ResponseEntity<User>(userUpdated, HttpStatus.OK);
+		
 	}
 	
 	@GetMapping("/users")
@@ -72,6 +85,18 @@ public class UserRessource {
 		Collection<User> users = userService.getAllUsers();
 		return new ResponseEntity<Collection<User>>(users, HttpStatus.FOUND);
 		
+	}
+	
+	@GetMapping("/user/{userId}")
+	public ResponseEntity<User> findUserById(@PathVariable Long userId){
+		Optional<User> user = userService.getUserById(userId);
+		return new ResponseEntity<User>(user.get(), HttpStatus.FOUND);
+	}
+	
+	@DeleteMapping("/user/{userId}")
+	public ResponseEntity<User> deleteUser(@PathVariable Long userId){
+		Optional<User> user = userService.getUserById(userId);
+		return new ResponseEntity<User>(user.get(), HttpStatus.FOUND);
 	}
 	
 	/*
