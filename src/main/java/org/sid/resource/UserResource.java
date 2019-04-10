@@ -1,4 +1,4 @@
-package org.sid.ressource;
+package org.sid.resource;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -9,6 +9,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.sid.exception.BusinessResourceException;
 import org.sid.model.Role;
 import org.sid.model.RoleName;
 import org.sid.model.User;
@@ -33,9 +34,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/user/*")
 @CrossOrigin(origins="*", maxAge = 3600)
-public class UserRessource {
+public class UserResource {
 	
-	public static final Logger logger = LoggerFactory.getLogger(UserRessource.class);
+	public static final Logger logger = LoggerFactory.getLogger(UserResource.class);
 
 	@Autowired
 	UserService userService;
@@ -46,18 +47,23 @@ public class UserRessource {
 	@PostMapping("/users")
 	@Transactional
 	public ResponseEntity<User> saveUser(@RequestBody User user){
+		User userSave;
+		try {
+			Role roleAdmin = new Role(RoleName.ROLE_ADMIN);
+			Set<Role> roles = new HashSet<Role>();
+			roles.add(roleAdmin);
+			user.setRoles(roles);
+			
+			// Provisoire
+			roles = extractRole(user.getRoles(),roleService.getAllRolesStream());
+			user.setRoles(roles);
+			
+			logger.debug("Save user");
+			userSave = userService.saveOrUpdateUser(user);
 		
-		Role roleAdmin = new Role(RoleName.ROLE_ADMIN);
-		Set<Role> roles = new HashSet<Role>();
-		roles.add(roleAdmin);
-		user.setRoles(roles);
-		
-		// Provisoire
-		roles = extractRole(user.getRoles(),roleService.getAllRolesStream());
-		user.setRoles(roles);
-		
-		logger.debug("Save user");
-		User userSave = userService.saveOrUpdateUser(user);
+		}catch(Exception e) {
+			throw new BusinessResourceException("Error save", "Error when we save user", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
 		return new ResponseEntity<User>(userSave, HttpStatus.CREATED);
 		
@@ -88,15 +94,22 @@ public class UserRessource {
 	}
 	
 	@GetMapping("/user/{userId}")
-	public ResponseEntity<User> findUserById(@PathVariable Long userId){
+	public ResponseEntity<User> findUserById(@PathVariable Long userId) throws BusinessResourceException{
 		Optional<User> user = userService.getUserById(userId);
+		if(!user.isPresent()) {
+			throw new BusinessResourceException("404", "User not found", HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<User>(user.get(), HttpStatus.FOUND);
 	}
 	
 	@DeleteMapping("/user/{userId}")
-	public ResponseEntity<User> deleteUser(@PathVariable Long userId){
-		Optional<User> user = userService.getUserById(userId);
-		return new ResponseEntity<User>(user.get(), HttpStatus.FOUND);
+	public ResponseEntity<String> deleteUser(@PathVariable Long userId) throws BusinessResourceException{
+		try {
+			userService.deletUser(userService.getUserById(userId).get());
+		}catch(Exception e) {
+			throw new BusinessResourceException("Erreur sup", "Error when we delete user", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<String>(HttpStatus.GONE);
 	}
 	
 	/*

@@ -1,4 +1,4 @@
-package org.sid.ressource;
+package org.sid.resource;
 
 import javax.validation.Valid;
 
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @CrossOrigin(origins="*", maxAge=3600)
 @Controller
 @RequestMapping("/api/auth")
-public class AuthenticationRessource {
+public class AuthenticationResource {
 	
 	@Autowired
 	AuthenticationManager authenticationManager;

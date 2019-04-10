@@ -16,9 +16,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.annotations.NaturalId;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Entity
@@ -53,6 +55,7 @@ public class User {
 	@Column(name="PASSWORD")
 	@NotBlank
 	//@Size(min=3, max=50)
+	@JsonIgnore
 	private String password;
 	
 	@ManyToMany(fetch= FetchType.EAGER)

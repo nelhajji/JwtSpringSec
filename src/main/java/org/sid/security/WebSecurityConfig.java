@@ -1,6 +1,8 @@
 package org.sid.security;
 
 import org.sid.security.util.JWTProperties;
+import org.sid.service.roleservice.RoleService;
+import org.sid.service.roleservice.RoleServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -16,12 +18,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-//@EnableWebSecurity
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	
-	@Autowired
-	UserDetailsService userDetailsService;
+	//@Autowired
+	//UserDetailsService userDetailsService;
 	
 	
 	@Bean
@@ -43,9 +45,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth
+		/*auth
 		.userDetailsService(userDetailsService)
-		.passwordEncoder(passwordEncoder());
+		.passwordEncoder(passwordEncoder());*/
 	}
 	
 	@Override
